@@ -12,17 +12,6 @@ const asArray = (data) => {
   return data.split(/\r?\n/);
 };
 
-// const toPairs = (array) => {
-//   return array.reduce((acc, current) => {
-//     const half = current.length / 2
-//     const firstHalf = current.slice(0, half);
-//     const secondHalf = current.slice(half, current.length)
-
-//     acc = [...acc, [[...firstHalf], [...secondHalf]]]
-//     return acc;
-//   }, []);
-// };
-
 const group = (array) => {
   let groupIndex = 0;
   return array.reduce((acc, current, index) => {
