@@ -17,11 +17,41 @@ const readInput = () => {
 
 const toArray = (data) => data.split(/\r?\n/);
 
+const parseCommand = (line) => line.slice(2).split(" ");
+
 const buildDirectoryTree = (terminalLines) => {
-  return terminalLines.reduce((line) => {
-    if (line.startsWith("$")) {
+  const commandIdentifier = "$";
+  const rootDir = "/";
+  const upperDir = "..";
+
+  const tree = {
+    type: "dir",
+    name: rootDir,
+    size: 0,
+    parent: "",
+    children: [],
+    depth: 0,
+  };
+
+  let currentDepth = 0;
+  let currentDir = rootDir;
+
+  for (let index = 0; index < terminalLines.length; index++) {
+    const line = terminalLines[index];
+
+    if (line.startsWith(commandIdentifier)) {
+      const [cmd, cmdArg] = parseCommand(line);
+      if (cmd === "cd") {
+        if (cmdArg === rootDir) {
+          currentDepth = 0;
+          currentDir = rootDir;
+        } else if (cmdArg === upperDir) {
+          --currentDepth;
+          currentDir = cmdArg;
+        }
+      }
     }
-  }, {});
+  }
 };
 
 const app = () => {
