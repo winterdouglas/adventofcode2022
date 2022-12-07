@@ -43,15 +43,7 @@ const buildItemList = (terminalLines) => {
   const rootDir = "/";
   const upperDir = "..";
 
-  let items = [
-    {
-      type: FileType.dir,
-      name: rootDir,
-      size: 0,
-      path: null, // parentId
-      fullPath: rootDir, // id
-    },
-  ];
+  let items = [];
   let currentDir = rootDir;
   let isListing = false;
   let lineIndex = 0;
@@ -86,40 +78,35 @@ const buildItemList = (terminalLines) => {
   return items;
 };
 
-const toTree = (arr) => {
-  let arrMap = new Map(arr.map((item) => [item.fullPath, item]));
-  let tree = [];
-
-  for (let i = 0; i < arr.length; i++) {
-    let item = arr[i];
-
-    if (item.path !== null) {
-      let parentItem = arrMap.get(item.path);
-
-      if (parentItem) {
-        let { children } = parentItem;
-
-        if (children) {
-          parentItem.children.push(item);
-        } else {
-          parentItem.children = [item];
-        }
-      }
-    } else {
-      tree.push(item);
-    }
-  }
-
-  return tree;
+const groupBy = (array, key) => {
+  return array.reduce((acc, current) => {
+    (acc[current[key]] = acc[current[key]] || []).push(current);
+    return acc;
+  }, {});
 };
 
 const app = () => {
   const data = readInput();
   const terminalLines = toArray(data);
   const items = buildItemList(terminalLines);
-  const tree = toTree(items);
-
-  console.log(JSON.stringify(tree, null, 2));
+  const folders = groupBy(items, "path");
+  const folderSizes = Object.keys(folders).reduce((acc, currentFolder) => {
+    const children = Object.values(items).filter((item) =>
+      item.path.startsWith(currentFolder)
+    );
+    acc[currentFolder] = children.reduce((accChild, currentChild) => {
+      accChild += currentChild.size;
+      return accChild;
+    }, 0);
+    return acc;
+  }, {});
+  const sum = Object.keys(folderSizes)
+    .filter((key) => folderSizes[key] <= 100000)
+    .reduce((acc, currentKey) => {
+      acc += folderSizes[currentKey];
+      return acc;
+    }, 0);
+  console.log(sum);
 };
 
 app();
