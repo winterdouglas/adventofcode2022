@@ -1,3 +1,4 @@
 {
-  "name": "puzzle"
+  "name": "puzzle",
+  "type": "module"
 }

@@ -1,8 +1,8 @@
-const fs = require("fs");
+import { readFile } from "fs/promises";
 
-const readInput = () => {
+const readInput = async () => {
   try {
-    return fs.readFileSync("input.txt", "utf8");
+    return await readFile("input.txt", { encoding: "utf8" });
   } catch (err) {
     console.error(err);
   }
@@ -29,7 +29,7 @@ const toInstruction = (line) => {
 
 //const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-const clock = async (onTick) => {
+const clock = (onTick) => {
   let cycle = 0;
   let run = true;
 
@@ -38,7 +38,7 @@ const clock = async (onTick) => {
   };
 
   while (run) {
-    ++cycle;
+    cycle++;
     if (onTick) onTick(cycle, stop);
     //await sleep(50);
   }
@@ -65,11 +65,10 @@ const process = (lines) => {
       console.log([cycle, x]);
     }
 
-    if (instructionIndex === instructions.length - 1) {
+    if (instructionIndex === instructions.length) {
       stop();
-
-      //console.log(snapshot);
       console.log(sum(snapshot));
+      return;
     }
 
     const [ci, cv] = instructions[instructionIndex];
@@ -105,27 +104,14 @@ const process = (lines) => {
         throw Error("Instruction not recognized");
     }
 
-    // if (snapshot[cycle] === 0) {
-    //   snapshot[cycle] = x * cycle;
-
-    //   console.log([cycle, x]);
-    // }
-
     //console.log([cycle, x]);
-
-    // if (instructionIndex === instructions.length) {
-    //   stop();
-
-    //   //console.log(snapshot);
-    //   //console.log(sum(snapshot));
-    // }
   });
 };
 
-const app = () => {
-  const data = readInput();
+const app = async () => {
+  const data = await readInput();
   const lines = toLines(data);
-  const snapshot = process(lines);
+  process(lines);
 };
 
 app();
