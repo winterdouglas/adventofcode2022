@@ -41,48 +41,19 @@ const processHeadStep = (direction, currentPosition) => {
   }
 };
 
-const processTailStep = (direction, currentPosition, prevPosition) => {
+const processTailStep = (currentPosition, prevPosition) => {
   const maxDistance = 2;
 
-  switch (direction) {
-    case Direction.L:
-      if (Math.abs(currentPosition.hX - currentPosition.tX) >= maxDistance) {
-        currentPosition.tX = prevPosition.hX;
-        currentPosition.tY = prevPosition.hY;
-        currentPosition.visited.add(
-          JSON.stringify({ tX: currentPosition.tX, tY: currentPosition.tY })
-        );
-      }
-      break;
-    case Direction.R:
-      if (Math.abs(currentPosition.hX - currentPosition.tX) >= maxDistance) {
-        currentPosition.tX = prevPosition.hX;
-        currentPosition.tY = prevPosition.hY;
-        currentPosition.visited.add(
-          JSON.stringify({ tX: currentPosition.tX, tY: currentPosition.tY })
-        );
-      }
-      break;
-    case Direction.U:
-      if (Math.abs(currentPosition.hY - currentPosition.tY) >= maxDistance) {
-        currentPosition.tX = prevPosition.hX;
-        currentPosition.tY = prevPosition.hY;
-        currentPosition.visited.add(
-          JSON.stringify({ tX: currentPosition.tX, tY: currentPosition.tY })
-        );
-      }
-      break;
-    case Direction.D:
-      if (Math.abs(currentPosition.hY - currentPosition.tY) >= maxDistance) {
-        currentPosition.tX = prevPosition.hX;
-        currentPosition.tY = prevPosition.hY;
-        currentPosition.visited.add(
-          JSON.stringify({ tX: currentPosition.tX, tY: currentPosition.tY })
-        );
-      }
-      break;
-    default:
-      throw Error("Unknown direction");
+  if (
+    Math.abs(currentPosition.hX - currentPosition.tX) >= maxDistance ||
+    Math.abs(currentPosition.hY - currentPosition.tY) >= maxDistance
+  ) {
+    currentPosition.tX = prevPosition.hX;
+    currentPosition.tY = prevPosition.hY;
+
+    currentPosition.visited.add(
+      JSON.stringify({ tX: currentPosition.tX, tY: currentPosition.tY })
+    );
   }
 };
 
@@ -94,7 +65,7 @@ const process = (lines) => {
       for (let step = 0; step < steps; step++) {
         const prevPosition = { ...accPosition };
         processHeadStep(direction, accPosition);
-        processTailStep(direction, accPosition, prevPosition);
+        processTailStep(accPosition, prevPosition);
       }
 
       return accPosition;
