@@ -90,15 +90,15 @@ const processMonkeys = (monkeys) => {
       const item = monkey.items[0];
 
       const worryLevel = monkey.operation(item);
-      const newWorryLevel = lowerWorryLevel(worryLevel);
-      const isDivisible = monkey.test(newWorryLevel);
+      //const newWorryLevel = lowerWorryLevel(worryLevel);
+      const isDivisible = monkey.test(worryLevel);
 
       const targetMonkey = isDivisible
         ? monkey.targetIfTrue
         : monkey.targetIfFalse;
       monkeys[targetMonkey].items = [
         ...monkeys[targetMonkey].items,
-        newWorryLevel,
+        worryLevel,
       ];
 
       const removed = remove(monkey.items, 0);
@@ -141,7 +141,7 @@ const app = async () => {
   const lines = toLines(data);
   const groups = groupMonkeys(lines);
   const monkeys = toMonkeys(groups);
-  const processed = processRounds(20, monkeys);
+  const processed = processRounds(10000, monkeys);
   const result = monkeyBusiness(processed);
 
   //print(processed);
